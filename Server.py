@@ -10,13 +10,13 @@ class Server(object):
     # CPU capacity for MIPS -> used to determine utilization
     _processingPowerInMIPS = 2500000
 
-"""
-__init__
+    """
+    __init__
 
-Initialize a server based on input parameters and default values as necessary
+    Initialize a server based on input parameters and default values as necessary
 
-@return: none
-"""
+    @return: none
+    """
     def __init__(self):
         super(Server, self).__init__()
         # Queue used to track the job processing times
@@ -45,25 +45,25 @@ Initialize a server based on input parameters and default values as necessary
 
 # Getters
 
-"""
-getAvgUtilization
+    """
+    getAvgUtilization
 
-@return: the average utilization of the server based on the utilization history
-"""
+    @return: the average utilization of the server based on the utilization history
+    """
     def getAvgUtilization(self):
         if self.numJobsProcessed > 0:
             return round(sum(self.utilizationHistory) / self.numJobsProcessed, 2)
         else:
             return 0.0
 
-"""
-getAvgResponseTime
+    """
+    getAvgResponseTime
 
-Determines the average response time of all jobs completed by the server. If the
-server finished no jobs (i.e. was off) then return default value - 0
+    Determines the average response time of all jobs completed by the server. If the
+    server finished no jobs (i.e. was off) then return default value - 0
 
-@return: average respones time of all completed jobs
-"""
+    @return: average respones time of all completed jobs
+    """
     def getAvgResponseTime(self):
         if len(self.jobsFinished) > 0:
             numJobsFinished = 0
@@ -75,95 +75,94 @@ server finished no jobs (i.e. was off) then return default value - 0
             return sumTimes / numJobsFinished
         return 0
 
-"""
-getInstantUtil
+    """
+    getInstantUtil
 
-@return: the instantaneous utiliazation of the server
-"""
+    @return: the instantaneous utiliazation of the server
+    """
     def getInstantUtil(self):
         return self.util
 
-"""
-getIsServerOn
+    """
+    getIsServerOn
 
-@return: boolean server on or off
-"""
+    @return: boolean server on or off
+    """
     def getIsServerOn(self):
         return self.isTurnedOn
 
-"""
-getServerID
+    """
+    getServerID
 
-@return: instance number for the object
-"""
+    @return: instance number for the object
+    """
     def getServerID(self):
         return self.serverID
 
-"""
-getQueueLength
+    """
+    getQueueLength
 
-@return: length of the job queue for the server
-"""
+    @return: length of the job queue for the server
+    """
     def getQueueLength(self):
         return len(self.queue)
 
-"""
-getNextDepartureTime
+    """
+    getNextDepartureTime
 
-@return: time of the next departure from the server based on the job queue
-"""
+    @return: time of the next departure from the server based on the job queue
+    """
     def getNextDepartureTime(self):
         if (len(self.queue) > 0):
             return self.queue[0].getProcessingTime()
         return maxint
 
-"""
-getIsBusy
+    """
+    getIsBusy
 
-@return: whether the server is working on a job or not - boolean True/False
-"""
+    @return: whether the server is working on a job or not - boolean True/False
+    """
     def getIsBusy(self):
         return self.isBusy
 
-"""
-getTotalEnergyConsumption
+    """
+    getTotalEnergyConsumption
 
-@return: energy consumed by the server up to the point of calling this method
-"""
+    @return: energy consumed by the server up to the point of calling this method
+    """
     def getTotalEnergyConsumption(self):
         return round(self.energyConsumed, 2)
 
-"""
-getMaxTemp
+    """
+    getMaxTemp
 
-@return: maximum temperature reached by the server thus far
-"""
+    @return: maximum temperature reached by the server thus far
+    """
     def getMaxTemp(self):
         return round(self.maxTemp, 2)
 
 # Setter
-"""
-setIsServerOn
+    """
+    setIsServerOn
 
-Set the power state of the server (turned on or off).
+    Set the power state of the server (turned on or off).
 
-@param isOn: True if want server to be on False if want server to be off
-"""
+    @param isOn: True if want server to be on False if want server to be off
+    """
     def setIsServerOn(self, isOn):
         self.isTurnedOn = isOn
 
 # Functionality methods
 
-"""
-processNextDeparture
+    """
+    processNextDeparture
 
-Process the next departure from the queue of jobs as long as there as jobs within the queue.
-Add the departing job to the list of jobs finished. Update the utilization history as well.
-If the queue is empty after the job departs then the server will shut down.
+    Process the next departure from the queue of jobs as long as there as jobs within the queue.
+    Add the departing job to the list of jobs finished. Update the utilization history as well.
+    If the queue is empty after the job departs then the server will shut down.
 
-@return: none
-"""
-
+    @return: none
+    """
     def processNextDeparture(self, endTime):
         if (len(self.queue) > 0):
             self.queue[0].setIsFinished(True)
@@ -177,13 +176,13 @@ If the queue is empty after the job departs then the server will shut down.
             self.isBusy = False
             self.isTurnedOn = False
 
-"""
-addNewArrival
+    """
+    addNewArrival
 
-Adds a new job to the server's job queue. Sets the server status to being busy
+    Adds a new job to the server's job queue. Sets the server status to being busy
 
-@return: none
-"""
+    @return: none
+    """
     def addNewArrival(self, simTime, processingTime, mips):
         if (processingTime > 0):
             newJob = Job(simTime, processingTime, mips)
@@ -191,38 +190,38 @@ Adds a new job to the server's job queue. Sets the server status to being busy
             self.isBusy = True
 
 # Update methods
-"""
-updateServerUtil
+    """
+    updateServerUtil
 
-Updates the server's current utilization based on the maximum processing power
-available to server and the processing requirements of the current job
+    Updates the server's current utilization based on the maximum processing power
+    available to server and the processing requirements of the current job
 
-@return: none
-"""
+    @return: none
+    """
     def updateServerUtil(self):
         self.util = self.queue[0].getMIPS() / Server._processingPowerInMIPS
 
-"""
-updateMaxTemp
+    """
+    updateMaxTemp
 
-Updates the maximum temperature of the server if the current temperature exceeds
-the previous maximum temperature
+    Updates the maximum temperature of the server if the current temperature exceeds
+    the previous maximum temperature
 
-@return: none
-"""
+    @return: none
+    """
     def updateMaxTemp(self):
         currTemp = self.heatModel.getCurrTemp(self.util)
         if (self.maxTemp < currTemp):
             self.maxTemp = currTemp
 
-"""
-updateProcessingTimes
+    """
+    updateProcessingTimes
 
-Updates the processing time of the current job being worked on. Also calls to update
-the utilization, temperature, and power consumption of the servers.
+    Updates the processing time of the current job being worked on. Also calls to update
+    the utilization, temperature, and power consumption of the servers.
 
-@return: none 
-"""
+    @return: none
+    """
     def updateProcessingTimes(self, elapsedTime):
         if (len(self.queue) > 0):
             updatedProcessingTime = self.queue[0].getProcessingTime() - elapsedTime

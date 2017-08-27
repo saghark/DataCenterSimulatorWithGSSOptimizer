@@ -6,22 +6,22 @@ from random import random, uniform, seed, randint
 
 class Simulator(object):
 
-"""
-__init__
+    """
+    __init__
 
-Initialization function for the Simulator object. Assigns the necessary instance variables based on arguments,
-create the server objects needed, and set up the lists necessary for tracking the results.
+    Initialization function for the Simulator object. Assigns the necessary instance variables based on arguments,
+    create the server objects needed, and set up the lists necessary for tracking the results.
 
-@param lamb: the interarrival rate for the simulator
-@param mu: the job size parameter for the simulator
-@param numServers: number of servers that the simulator will contain
-@param simTime: the number of time units the simulator is alloted to run for
-@param numReps: number of repetitions the simulator will run for
-@param jobMaxMIPS: the maximum number of millions of instructions per second (MIPS) that a job can reach
-@param toTurnOn: the aggressivness parameter determines the number of servers that are initially turned on within the simulator
+    @param lamb: the interarrival rate for the simulator
+    @param mu: the job size parameter for the simulator
+    @param numServers: number of servers that the simulator will contain
+    @param simTime: the number of time units the simulator is alloted to run for
+    @param numReps: number of repetitions the simulator will run for
+    @param jobMaxMIPS: the maximum number of millions of instructions per second (MIPS) that a job can reach
+    @param toTurnOn: the aggressivness parameter determines the number of servers that are initially turned on within the simulator
 
-@return: none
-"""
+    @return: none
+    """
     def __init__(self, lamb, mu, numServers, simTime, numReps, jobMaxMIPS, toTurnOn):
         super(Simulator, self).__init__()
 
@@ -70,15 +70,15 @@ create the server objects needed, and set up the lists necessary for tracking th
             else:
                 break
 
-"""
-resetVariablesForNewRepetition
+    """
+    resetVariablesForNewRepetition
 
-Reset the the necessary variables for a new repetition of the simulation.
-All of the variables being reset are those with default values in the initializer.
-New servers are also created and turned on as necessary
+    Reset the the necessary variables for a new repetition of the simulation.
+    All of the variables being reset are those with default values in the initializer.
+    New servers are also created and turned on as necessary
 
-@return: none
-"""
+    @return: none
+    """
     def resetVariablesForNewRepetition(self):
         # Initialize to default values
         self.servers = [Server() for i in range(0, self.numServers)]
@@ -96,64 +96,64 @@ New servers are also created and turned on as necessary
             else:
                 break
 
-"""
-getPowerConsumptions
+    """
+    getPowerConsumptions
 
-@return: list containing the power consumption of each server for each repetition
-"""
+    @return: list containing the power consumption of each server for each repetition
+    """
     def getPowerConsumptions(self):
         return self.powerConsumedByServers
 
-"""
-getAvgServerUtils
+    """
+    getAvgServerUtils
 
-@return: list containing the average utilization of each server for each repetition
-"""
+    @return: list containing the average utilization of each server for each repetition
+    """
     def getAvgServerUtils(self):
         return self.avgServerUtilizations
 
-"""
-getMaxTemps
+    """
+    getMaxTemps
 
-@return: list containing the maximum temperature of each server for each repetition
-"""
+    @return: list containing the maximum temperature of each server for each repetition
+    """
     def getMaxTemps(self):
         return self.maxTempTracker
 
-"""
-getThroughput
+    """
+    getThroughput
 
-@return: list containing the throughput for each repetition
-"""
+    @return: list containing the throughput for each repetition
+    """
     def getThroughput(self):
         return self.throughput
 
-"""
-getAvgJobsInSimulation
+    """
+    getAvgJobsInSimulation
 
-@return: list containing the average number of jobs within the simulation for each repetition
-"""
+    @return: list containing the average number of jobs within the simulation for each repetition
+    """
     def getAvgJobsInSimulation(self):
         return self.avgNumJobsInSystem
 
-"""
-getAvgResponseTime
+    """
+    getAvgResponseTime
 
-@return: list containing the average response time for each server's completed tasks
-         for each repetition
-"""
+    @return: list containing the average response time for each server's completed tasks
+             for each repetition
+    """
     def getAvgResponseTime(self):
         return self.avgResponseTimes
 
-"""
-addNewJobToServers
+    """
+    addNewJobToServers
 
-Add a new job to a specific server.
-First a processing time is determined using the generateNextProcessingTime() method,
-then the utilization requirements of the job are determined in MIPS and the job is added to a specified server.
-This method should be used when to change a routing policy if necessary.
+    Add a new job to a specific server.
+    First a processing time is determined using the generateNextProcessingTime() method,
+    then the utilization requirements of the job are determined in MIPS and the job is added to a specified server.
+    This method should be used when to change a routing policy if necessary.
 
-"""
+    """
     def addNewJobToServers(self):
         processingTime = self.generateNextProcessingTime()
         jobMIPS = self.generateNextJobMIPS()
@@ -161,18 +161,18 @@ This method should be used when to change a routing policy if necessary.
         indexOfServerToAssign = self.getIndexUsingShortestQueueWithDNSandRR()
         self.servers[indexOfServerToAssign].addNewArrival(self.currentTime, processingTime, jobMIPS)
 
-"""
-generateNextJobMIPS
+    """
+    generateNextJobMIPS
 
-Generate a random MIPS requirement for a job that is to be assigned. MIPS is generated from the desired utilization,
-but is allowed to "wiggle" within an acceptable margin; i.e. if the desired utilization is 0.7 then the MIPS can vary
-between 0.7-0.7*wiggle to 0.7+0.7*wiggle utilization. The utilization ultimately evens out within a few percent of the desired utilization.
-The wiggle can be adjusted to lessen or increase the range.
+    Generate a random MIPS requirement for a job that is to be assigned. MIPS is generated from the desired utilization,
+    but is allowed to "wiggle" within an acceptable margin; i.e. if the desired utilization is 0.7 then the MIPS can vary
+    between 0.7-0.7*wiggle to 0.7+0.7*wiggle utilization. The utilization ultimately evens out within a few percent of the desired utilization.
+    The wiggle can be adjusted to lessen or increase the range.
 
-Checks are in place to ensure that no utilization below 0 or above 1 can occur relative to the maxMIPS
+    Checks are in place to ensure that no utilization below 0 or above 1 can occur relative to the maxMIPS
 
-@return: the MIPS requirement for a job
-"""
+    @return: the MIPS requirement for a job
+    """
     def generateNextJobMIPS(self):
         # Setpoint is generated from Utilization = (Lambda / (Mu*numServers))
         setpoint = self.maxMIPS*(self.lamb / self.numServers)
@@ -189,66 +189,66 @@ Checks are in place to ensure that no utilization below 0 or above 1 can occur r
             return 0.0
         return currMIPS
 
-"""
-generateRandomTime
+    """
+    generateRandomTime
 
-Generates a uniform random value based on the input parameter
+    Generates a uniform random value based on the input parameter
 
-@param param: Either lambda or mu depending on the use. Lambda used to generate a job arrival time,
-              mu used to generate a job processing time.
+    @param param: Either lambda or mu depending on the use. Lambda used to generate a job arrival time,
+                  mu used to generate a job processing time.
 
-@return: a random time
-"""
+    @return: a random time
+    """
     def generateRandomTime(self, param):
         return -1.0 * log(random()) / (float)(param)
 
-"""
-generateNextArrival
+    """
+    generateNextArrival
 
-Generates an arrival time based on the interarrival rate Lambda
+    Generates an arrival time based on the interarrival rate Lambda
 
-@return: arrival time for another job
-"""
+    @return: arrival time for another job
+    """
     def generateNextArrival(self):
         return self.generateRandomTime(self.lamb)
 
-"""
-generateNextProcessingTime
+    """
+    generateNextProcessingTime
 
-Generates a processing time for a job based on the job size parameter, mu
+    Generates a processing time for a job based on the job size parameter, mu
 
-@return: processing time for a job
-"""
+    @return: processing time for a job
+    """
     def generateNextProcessingTime(self):
         return self.generateRandomTime(self.mu)
 
-"""
-getRandomServer
+    """
+    getRandomServer
 
-Returns the index of a random server amongst all available servers
+    Returns the index of a random server amongst all available servers
 
-@return: index of a random server
-"""
+    @return: index of a random server
+    """
     def getRandomServer(self):
         return (randint(0,100)) % len(self.servers)
 
-"""
-getIndexUsingShortestQueueWithDNSandRR
+    """
+    getIndexUsingShortestQueueWithDNSandRR
 
-Determine a server index based on the following:
+    Determine a server index based on the following:
 
-(1) - Check servers sequentially and find one that:
-      -> (a) - Is already on
-      -> (b) - Has a utilization below a certain threshold
-(2) - If (a) and (b) are met then
-      -> Assign the job to that server's queue
-(3) - If (a) and (b) are not met
-      -> Turn on a new server and use that
-(4) -> If no servers can be turned on since they're all already being used and are on
-      -> Assign the job randomly
+    (1) - Check servers sequentially and find one that:
+          -> (a) - Is already on
+          -> (b) - Has a utilization below a certain threshold
+    (2) - If (a) and (b) are met then
+          -> Assign the job to that server's queue
+    (3) - If (a) and (b) are not met
+          -> Turn on a new server and use that
+    (4) -> If no servers can be turned on since they're all already being used and are on
+          -> Assign the job randomly
 
-@return: index of a server based on the aforementioned rules
-"""
+    @return: index of a server based on the aforementioned rules
+    """
     def getIndexUsingShortestQueueWithDNSandRR(self):
         serverChosen = None
         # Threshold for utilization before taking the server out of consideration
@@ -283,24 +283,24 @@ Determine a server index based on the following:
             return self.getRandomServer()
         return self.servers.index(serverChosen)
 
-"""
-allocatedWithDynamicShutdowns
+    """
+    allocatedWithDynamicShutdowns
 
-This is honestly just here to call the previous method. I'll roll them into one method soon.
+    This is honestly just here to call the previous method. I'll roll them into one method soon.
 
-@return: none
-"""
+    @return: none
+    """
     def allocatedWithDynamicShutdowns(self, processingTime, processingMIPS):
         self.servers[self.getIndexUsingShortestQueueWithDNSandRR()].addNewArrival(self.currentTime, processingTime, processingMIPS)
 
-"""
-getServerWithNextDeparture
+    """
+    getServerWithNextDeparture
 
-Scan the servers and find the server with the next departure time. Can optimize this by keeping track of the servers during
-scans in previous function.
+    Scan the servers and find the server with the next departure time. Can optimize this by keeping track of the servers during
+    scans in previous function.
 
-@return: index of server with the earliest departure time
-"""
+    @return: index of server with the earliest departure time
+    """
     def getServerWithNextDeparture(self):
         nextDeparture = self.servers[0]
         for server in self.servers:
@@ -308,47 +308,47 @@ scans in previous function.
                 nextDeparture = server
         return self.servers.index(nextDeparture)
 
-"""
-updateServerTimes
+    """
+    updateServerTimes
 
-Update the times for all servers. The remaining processing times will be updated for jobs being worked on for each server.
+    Update the times for all servers. The remaining processing times will be updated for jobs being worked on for each server.
 
-@return: none
-"""
+    @return: none
+    """
     def updateServerTimes(self, elapsedTime):
         for server in self.servers:
             server.updateProcessingTimes(elapsedTime)
 
-"""
-updateAverageNumJobsInSystem
+    """
+    updateAverageNumJobsInSystem
 
-Updates the rolling average of the number of jobs within the system.
+    Updates the rolling average of the number of jobs within the system.
 
-@return: none
-"""
+    @return: none
+    """
     def updateAverageNumJobsInSystem(self, i, t1, t2):
         self.avgNumJobsInSystem[i] = self.avgNumJobsInSystem[i] * t1 / (float)(t1 + t2) + self.numJobsInSystem * t2 / (float)(t1 + t2)
 
-"""
-runSimulation
+    """
+    runSimulation
 
-Runs the simulation based on the parameters passed in to the initializer.
+    Runs the simulation based on the parameters passed in to the initializer.
 
-The method will run numRepetitions repetitions of the simulation each lasting simTime in duration.
+    The method will run numRepetitions repetitions of the simulation each lasting simTime in duration.
 
-How it works:
+    How it works:
 
--> Check the next arrival time and the next departure timeToNextArrival
-    -> If arrival is sooner
-        -> Create a new job
-        -> Assign the job
-    -> If departure is sooner
-        -> Handle the departure
-    -> Update times
--> At the end of repetition store all results for processing
+    -> Check the next arrival time and the next departure timeToNextArrival
+        -> If arrival is sooner
+            -> Create a new job
+            -> Assign the job
+        -> If departure is sooner
+            -> Handle the departure
+        -> Update times
+    -> At the end of repetition store all results for processing
 
-@return: none
-"""
+    @return: none
+    """
     def runSimulation(self):
         # Run the simution for numRepetitions reps
         for simNumber in range(0, self.numRepetitions):

@@ -13,13 +13,13 @@ class PowerModel(object):
         super(PowerModel, self).__init__()
 
 
-"""
-getPowerConsumed
+    """
+    getPowerConsumed
 
-@param util: utilization to calculate consumption for
-@param timeElapsed: duration of consumption
-@return: the power consumption based on the utilization over the elapsed time
-"""
+    @param util: utilization to calculate consumption for
+    @param timeElapsed: duration of consumption
+    @return: the power consumption based on the utilization over the elapsed time
+    """
     def getPowerConsumed(self, util, timeElapsed):
         powerAtUtil = PowerModel.__idleConsume + PowerModel.__linearConsume * util
         return timeElapsed * powerAtUtil

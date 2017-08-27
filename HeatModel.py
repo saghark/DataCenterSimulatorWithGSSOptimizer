@@ -10,11 +10,11 @@ class HeatModel(object):
     def __init__(self):
         super(HeatModel, self).__init__()
 
-"""
-getPowerConsumed
+    """
+    getPowerConsumed
 
-@param util: utilization to calculate temperature for
-@return: instantaneous temperature based on utilization 
-"""
+    @param util: utilization to calculate temperature for
+    @return: instantaneous temperature based on utilization
+    """
     def getCurrTemp(self, util):
         return HeatModel.__idleTemp + util * HeatModel.__linearTemp
